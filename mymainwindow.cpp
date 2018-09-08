@@ -12,6 +12,8 @@
 #include <QAction>
 #include <QTextFrame>
 #include <QDateTime>
+#include <QEvent>
+#include <QMimeData>
 
 Mat image,grayImage,featureImage;
 MyMainWindow::MyMainWindow(QWidget *parent) :
@@ -24,6 +26,7 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     _processPointer=-1;
     ui->textEdit->clear();
     ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0</h3>"));
+    setAcceptDrops(true);
 }
 
 MyMainWindow::~MyMainWindow()
@@ -63,6 +66,17 @@ QImage Mat2QImage(cv::Mat &imago)
 
     return img;
 }
+void MyMainWindow::setDisplayImage(Mat &img)
+{
+    if(img.cols>ui->label->size().height()&&img.rows>ui->label->size().width())
+        cv::resize(img,img,Size(ui->label->size().width(),ui->label->size().height()));
+    addInProcessList(img);
+    QImage imgo=Mat2QImage(img);
+    //store the picture
+    ui->label->clear();
+    ui->label->setPixmap(QPixmap::fromImage(imgo));
+}
+
 void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime=true)
 {
     QString insertMessage="<br><p style=' font-family : ";
@@ -109,19 +123,12 @@ void MyMainWindow::on_actionLoad_Picture_L_triggered()
         image=imread(name);
         if(!image.data){
             QMessageBox msgBox;
-            msgBox.setText(tr("No such image"));
+            msgBox.setText(tr("No such image!"));
             msgBox.exec();
             ui->label->clear();
         }
         else{
-            notGrayed=true;
-            if(image.cols>ui->label->size().height()&&image.rows>ui->label->size().width())
-                cv::resize(image,image,Size(ui->label->size().width(),ui->label->size().height()));
-            addInProcessList(image);
-            QImage img=Mat2QImage(image);
-            //store the picture
-            ui->label->clear();
-            ui->label->setPixmap(QPixmap::fromImage(img));
+            setDisplayImage(image);
             QString logInfo=filename+" opened.";
             htmlLog(tr("maroon"),logInfo,tr("times"));
         }
@@ -135,18 +142,14 @@ void MyMainWindow::on_actionGray_Scale_G_triggered()
         msgBox.setText(tr("Image data is null!"));
         msgBox.exec();
     }
-    else if(!notGrayed){
+    else if(image.type()==CV_8UC1){
         QMessageBox msgBox;
-        msgBox.setText(tr("Image data is already gray!"));
+        msgBox.setText(tr("Image is already in gray scale!"));
         msgBox.exec();
     }
     else{
         cvtColor(image,grayImage,COLOR_BGR2GRAY);
-        notGrayed=false;
-        addInProcessList(grayImage);
-        QImage img=Mat2QImage(grayImage);
-        ui->label->clear();
-        ui->label->setPixmap(QPixmap::fromImage(img));
+        setDisplayImage(grayImage);
     }
 }
 
@@ -157,16 +160,8 @@ void MyMainWindow::on_actionRestore_R_triggered()
         msgBox.setText(tr("Image data is null!"));
         msgBox.exec();
     }
-    else if(notGrayed){
-        //do nothing
-    }
     else{
-        notGrayed=true;
-        addInProcessList(image);
-        QImage img=Mat2QImage(image);
-        cvtColor(image,image,COLOR_BGR2RGB);
-        ui->label->clear();
-        ui->label->setPixmap(QPixmap::fromImage(img));
+        setDisplayImage(image);
     }
 }
 
@@ -238,5 +233,35 @@ void MyMainWindow::on_actionClear_C_triggered()
     htmlLog(tr("CadetBlue"),tr("Process list cleared!"),tr("Times New Roman"),false);
 }
 
-//git supported now
-//trial line, to delete later
+//event dealers
+void MyMainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if(event->mimeData()->hasUrls()){
+        qDebug()<<event->mimeData()->urls();
+        event->acceptProposedAction();
+    }
+    else
+        event->ignore();
+}
+
+void MyMainWindow::dropEvent(QDropEvent *event)
+{
+    const QMimeData *mimeData=event->mimeData();
+    if(mimeData->hasUrls()){
+        QList<QUrl> urlList=mimeData->urls();
+        //let the first url to be the local path
+        QString fileName=urlList.at(0).toLocalFile();
+        qDebug()<<"fileName:"<<fileName;
+        if(!fileName.isEmpty()){
+            QTextCodec *code = QTextCodec::codecForName("gb18030");
+            string name = code->fromUnicode(fileName).data();
+            Mat tempImage=imread(name);
+            if(tempImage.empty()){
+                cout<<"Invalid image!"<<endl;
+                return;
+            }
+            tempImage.copyTo(image);
+            addInProcessList(image);
+        }
+    }
+}

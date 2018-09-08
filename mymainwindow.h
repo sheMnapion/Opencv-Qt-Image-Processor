@@ -46,12 +46,16 @@ private slots:
 
 private:
     Ui::MyMainWindow *ui;
-    bool notGrayed;
     vector<Mat *> _processList;
     int _processPointer;
     void addInProcessList(Mat &);
     Mat* getPresentMatrix();
     void htmlLog(QString &color, QString &info, QString &font, bool addTime);
+    void setDisplayImage(Mat &);
+
+protected:
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 };
 
 #endif // MYMAINWINDOW_H
