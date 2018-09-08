@@ -48,14 +48,18 @@ private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;
     int _processPointer;
+    QSize _presentSize;
     void addInProcessList(Mat &);
     Mat* getPresentMatrix();
     void htmlLog(QString &color, QString &info, QString &font, bool addTime);
-    void setDisplayImage(Mat &);
+    void setDisplayImage(Mat &,bool);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 };
 
 #endif // MYMAINWINDOW_H

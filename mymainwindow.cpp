@@ -14,6 +14,7 @@
 #include <QDateTime>
 #include <QEvent>
 #include <QMimeData>
+#include <QResizeEvent>
 
 Mat image,grayImage,featureImage;
 MyMainWindow::MyMainWindow(QWidget *parent) :
@@ -27,6 +28,7 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     ui->textEdit->clear();
     ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0</h3>"));
     setAcceptDrops(true);
+    ui->label->setScaledContents(true);
 }
 
 MyMainWindow::~MyMainWindow()
@@ -66,11 +68,13 @@ QImage Mat2QImage(cv::Mat &imago)
 
     return img;
 }
-void MyMainWindow::setDisplayImage(Mat &img)
+void MyMainWindow::setDisplayImage(Mat &img,bool newImage=true)
 {
     if(img.cols>ui->label->size().height()&&img.rows>ui->label->size().width())
         cv::resize(img,img,Size(ui->label->size().width(),ui->label->size().height()));
-    addInProcessList(img);
+    _presentSize=ui->label->size();
+    if(newImage)
+        addInProcessList(img);
     QImage imgo=Mat2QImage(img);
     //store the picture
     ui->label->clear();
@@ -261,7 +265,34 @@ void MyMainWindow::dropEvent(QDropEvent *event)
                 return;
             }
             tempImage.copyTo(image);
-            addInProcessList(image);
+            setDisplayImage(image);
+            QString logInfo=fileName+" opened.";
+            htmlLog(tr("maroon"),logInfo,tr("times"));
         }
     }
 }
+
+void MyMainWindow::resizeEvent(QResizeEvent *)
+{
+    qDebug()<<this->frameGeometry();
+}
+
+void MyMainWindow::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button()==Qt::LeftButton){
+        QCursor cursor;
+        cursor.setShape(Qt::ClosedHandCursor);
+        QApplication::setOverrideCursor(cursor);
+    }
+    else if(event->button()==Qt::RightButton){
+        QCursor cursor(QPixmap("image/stock_print.jpg"));
+        QApplication::setOverrideCursor(cursor);
+    }
+}
+
+void MyMainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event);
+    QApplication::restoreOverrideCursor();
+}
+
