@@ -12,6 +12,11 @@
 #include <set>
 #include <vector>
 
+#define PIC_SHOW(PIC,WIN_NAME,WINDOW_TYPE) namedWindow(WIN_NAME,WINDOW_TYPE); \
+    imshow(WIN_NAME,PIC)
+#define AUTO_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_AUTOSIZE)
+#define NORMAL_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_NORMAL)
+
 using namespace cv;
 using namespace std;
 

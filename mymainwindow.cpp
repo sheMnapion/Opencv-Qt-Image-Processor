@@ -37,30 +37,32 @@ MyMainWindow::~MyMainWindow()
 }
 // some help functions
 // include mat-qimage transformation, html log helpers and etc
-QImage Mat2QImage(cv::Mat &imago)
+QImage *Mat2QImage(const Mat &imago)
 {
-    QImage img;
+    QImage *img;
 
     if(imago.channels()==3)
     {
         //cvt Mat BGR 2 QImage RGB
         cout<<"Normal picture"<<endl;
-        cv::cvtColor(imago,imago,CV_BGR2RGB);
-        img =QImage((const unsigned char*)(imago.data),
-                    imago.cols,imago.rows,
-                    imago.cols*imago.channels(),
+        Mat *temp=new Mat();
+        *temp=imago.clone();
+        cv::cvtColor(*temp,*temp,CV_BGR2RGB);
+        img =new QImage((const unsigned char*)(temp->data),
+                    temp->cols,temp->rows,
+                    temp->cols*temp->channels(),
                     QImage::Format_RGB888);
     }
     else if(imago.type()==CV_8UC1){
         cout<<"Gray picture!"<<endl;
-        img =QImage((const unsigned char*)(imago.data),
+        img =new QImage((const unsigned char*)(imago.data),
                     imago.cols,imago.rows,
                     imago.cols*imago.channels(),
                     QImage::Format_Grayscale8);
     }
     else
     {
-        img =QImage((const unsigned char*)(imago.data),
+        img =new QImage((const unsigned char*)(imago.data),
                     imago.cols,imago.rows,
                     imago.cols*imago.channels(),
                     QImage::Format_RGB888);
@@ -75,10 +77,10 @@ void MyMainWindow::setDisplayImage(Mat &img,bool newImage=true)
     _presentSize=ui->label->size();
     if(newImage)
         addInProcessList(img);
-    QImage imgo=Mat2QImage(img);
+    QImage *imgo=Mat2QImage(img);
     //store the picture
     ui->label->clear();
-    ui->label->setPixmap(QPixmap::fromImage(imgo));
+    ui->label->setPixmap(QPixmap::fromImage(*imgo));
 }
 
 void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime=true)
@@ -180,7 +182,7 @@ void MyMainWindow::on_actionNext_N_triggered()
     else{
         Mat* nextImageToShow=_processList[++_processPointer];
         ui->label->clear();
-        ui->label->setPixmap(QPixmap::fromImage(Mat2QImage(*nextImageToShow)));
+        ui->label->setPixmap(QPixmap::fromImage(*Mat2QImage(*nextImageToShow)));
     }
 }
 
@@ -195,7 +197,7 @@ void MyMainWindow::on_actionCancel_C_triggered()
     else{
         Mat* lastImageToShow=_processList[--_processPointer];
         ui->label->clear();
-        ui->label->setPixmap(QPixmap::fromImage(Mat2QImage(*lastImageToShow)));
+        ui->label->setPixmap(QPixmap::fromImage(*Mat2QImage(*lastImageToShow)));
     }
 }
 
