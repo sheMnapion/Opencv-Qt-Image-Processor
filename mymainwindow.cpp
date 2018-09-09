@@ -1,5 +1,6 @@
 #include "mymainwindow.h"
 #include "ui_mymainwindow.h"
+#include "opencvhelper.h"
 #include <QFileDialog>
 #include <QString>
 #include <QObject>
@@ -284,7 +285,34 @@ void MyMainWindow::mousePressEvent(QMouseEvent *event)
     if(event->button()==Qt::LeftButton){
         QCursor cursor;
         cursor.setShape(Qt::ClosedHandCursor);
+        Mat *preImage=getPresentMatrix();
+        if(preImage==NULL)
+            return;
         QApplication::setOverrideCursor(cursor);
+        QPoint clickPoint=event->pos()-ui->label->pos()-ui->centralWidget->pos();
+        qDebug()<<"Click at "<<clickPoint;
+        uchar *pixels=pixelColor(*preImage,clickPoint.ry(),clickPoint.rx());
+        if(pixels==NULL){
+            ui->textBrowser->clear();
+            ui->textBrowser->setTextColor(Qt::red);
+            ui->textBrowser->setText(tr("Out of image range"));
+            return;
+        }
+        QString message="Pos:(";
+        message+=QString::number(clickPoint.rx())+" "+QString::number(clickPoint.ry());
+        message+=") Color:(";
+        qDebug()<<message;
+        for(int i=0;i<preImage->channels();i++){
+            message+=QString::number(pixels[i]);
+            if(i<preImage->channels()-1)
+                message+=" ";
+        }
+        message+=")";
+        qDebug()<<message;
+        ui->textBrowser->clear();
+        ui->textBrowser->setTextColor(Qt::black);
+        ui->textBrowser->setText(message);
+        free(pixels);
     }
     else if(event->button()==Qt::RightButton){
         QCursor cursor(QPixmap("image/stock_print.jpg"));
