@@ -49,6 +49,14 @@ private slots:
 
     void on_actionClear_C_triggered();
 
+    void on_actionDetect_triggered();
+
+    void on_startDetectButton_clicked();
+
+    void on_endDetectButton_clicked();
+
+    void on_detectSelectionBox_currentTextChanged(const QString &arg1);
+
 private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;
@@ -58,6 +66,7 @@ private:
     Mat* getPresentMatrix();
     void htmlLog(QString &color, QString &info, QString &font, bool addTime);
     void setDisplayImage(Mat &,bool);
+    void setDetectionDisplay(bool);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);

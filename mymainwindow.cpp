@@ -30,6 +30,13 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0</h3>"));
     setAcceptDrops(true);
     ui->label->setScaledContents(true);
+    setDetectionDisplay(false);
+    //add detection selections
+    ui->detectSelectionBox->addItem("Fast Detector");
+    ui->detectSelectionBox->addItem("Surf Detector");
+    ui->detectSelectionBox->addItem("Orb Detector");
+    ui->detectThresholdBox->setMinimum(2);
+    ui->detectThresholdBox->setMaximum(9);
 }
 
 MyMainWindow::~MyMainWindow()
@@ -82,6 +89,16 @@ void MyMainWindow::setDisplayImage(Mat &img,bool newImage=true)
     //store the picture
     ui->label->clear();
     ui->label->setPixmap(QPixmap::fromImage(*imgo));
+}
+
+void MyMainWindow::setDetectionDisplay(bool enabled)
+{
+    ui->label_2->setVisible(enabled);
+    ui->label_3->setVisible(enabled);
+    ui->detectSelectionBox->setVisible(enabled);
+    ui->detectThresholdBox->setVisible(enabled);
+    ui->startDetectButton->setVisible(enabled);
+    ui->endDetectButton->setVisible(enabled);
 }
 
 void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime=true)
@@ -326,3 +343,48 @@ void MyMainWindow::mouseReleaseEvent(QMouseEvent *event)
     QApplication::restoreOverrideCursor();
 }
 
+
+void MyMainWindow::on_actionDetect_triggered()
+{
+    setDetectionDisplay(true);
+}
+
+void MyMainWindow::on_startDetectButton_clicked()
+{
+    Mat *presentImage=getPresentMatrix();
+    if(presentImage==NULL){
+        QMessageBox msgBox;
+        msgBox.setText(tr("image data is null"));
+        msgBox.exec();
+        return;
+    }
+    Mat img=presentImage->clone();
+    Mat featureImage;
+    int threshold=ui->detectThresholdBox->value();
+    QString method=ui->detectSelectionBox->currentText();
+    setFeatureMatrix(img,featureImage,threshold,method);
+    setDisplayImage(featureImage,false);
+}
+
+void MyMainWindow::on_endDetectButton_clicked()
+{
+    setDetectionDisplay(false);
+}
+
+void MyMainWindow::on_detectSelectionBox_currentTextChanged(const QString &arg1)
+{
+    qDebug()<<"Current Text: "<<arg1;
+    if(arg1=="Surf Detector"){
+        ui->detectThresholdBox->setMinimum(2);
+        ui->detectThresholdBox->setMaximum(9);
+    }
+    else if(arg1=="Fast Detector"){
+        ui->detectThresholdBox->setMinimum(0);
+        ui->detectThresholdBox->setMaximum(255);
+    }
+    else if(arg1=="Orb Detector"){//adjust nFeature
+        ui->detectThresholdBox->setMinimum(10);
+        ui->detectThresholdBox->setMaximum(500);
+        ui->detectThresholdBox->setSingleStep(10);
+    }
+}

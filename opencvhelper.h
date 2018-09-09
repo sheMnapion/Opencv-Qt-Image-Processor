@@ -5,5 +5,5 @@
 #include <ctype.h>
 #include <stdint.h>
 uchar *pixelColor(Mat &img,int x,int y);
-
+void setFeatureMatrix(Mat &image, Mat &featureImage, int threshold,QString &method);
 #endif // OPENCVHELPER_H
