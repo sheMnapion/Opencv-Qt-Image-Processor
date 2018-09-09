@@ -43,79 +43,7 @@ MyMainWindow::~MyMainWindow()
 {
     delete ui;
 }
-// some help functions
-// include mat-qimage transformation, html log helpers and etc
-QImage *Mat2QImage(const Mat &imago)
-{
-    QImage *img;
 
-    if(imago.channels()==3)
-    {
-        //cvt Mat BGR 2 QImage RGB
-        cout<<"Normal picture"<<endl;
-        Mat *temp=new Mat();
-        *temp=imago.clone();
-        cv::cvtColor(*temp,*temp,CV_BGR2RGB);
-        img =new QImage((const unsigned char*)(temp->data),
-                    temp->cols,temp->rows,
-                    temp->cols*temp->channels(),
-                    QImage::Format_RGB888);
-    }
-    else if(imago.type()==CV_8UC1){
-        cout<<"Gray picture!"<<endl;
-        img =new QImage((const unsigned char*)(imago.data),
-                    imago.cols,imago.rows,
-                    imago.cols*imago.channels(),
-                    QImage::Format_Grayscale8);
-    }
-    else
-    {
-        img =new QImage((const unsigned char*)(imago.data),
-                    imago.cols,imago.rows,
-                    imago.cols*imago.channels(),
-                    QImage::Format_RGB888);
-    }
-
-    return img;
-}
-void MyMainWindow::setDisplayImage(Mat &img,bool newImage=true)
-{
-    if(img.cols>ui->label->size().height()&&img.rows>ui->label->size().width())
-        cv::resize(img,img,Size(ui->label->size().width(),ui->label->size().height()));
-    _presentSize=ui->label->size();
-    if(newImage)
-        addInProcessList(img);
-    QImage *imgo=Mat2QImage(img);
-    //store the picture
-    ui->label->clear();
-    ui->label->setPixmap(QPixmap::fromImage(*imgo));
-}
-
-void MyMainWindow::setDetectionDisplay(bool enabled)
-{
-    ui->label_2->setVisible(enabled);
-    ui->label_3->setVisible(enabled);
-    ui->detectSelectionBox->setVisible(enabled);
-    ui->detectThresholdBox->setVisible(enabled);
-    ui->startDetectButton->setVisible(enabled);
-    ui->endDetectButton->setVisible(enabled);
-}
-
-void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime=true)
-{
-    QString insertMessage="<br><p style=' font-family : ";
-    insertMessage+=font;
-    insertMessage+="; color : ";
-    insertMessage+=color;
-    insertMessage+=" '>";
-    insertMessage+=info;
-    insertMessage+="<br>";
-    if(addTime)
-        insertMessage+=QDateTime::currentDateTime().toString();
-    ui->textEdit->insertHtml(insertMessage);
-}
-
-// end of help functions
 void MyMainWindow::on_actionExit_E_triggered()
 {
     this->close();
@@ -312,7 +240,7 @@ void MyMainWindow::mousePressEvent(QMouseEvent *event)
         if(pixels==NULL){
             ui->textBrowser->clear();
             ui->textBrowser->setTextColor(Qt::red);
-            ui->textBrowser->setText(tr("Out of image range"));
+            //ui->textBrowser->setText(tr("Out of image range"));
             return;
         }
         QString message="Pos:(";
@@ -387,4 +315,6 @@ void MyMainWindow::on_detectSelectionBox_currentTextChanged(const QString &arg1)
         ui->detectThresholdBox->setMaximum(500);
         ui->detectThresholdBox->setSingleStep(10);
     }
+    else
+        assert(0);
 }

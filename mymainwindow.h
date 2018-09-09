@@ -64,8 +64,8 @@ private:
     QSize _presentSize;
     void addInProcessList(Mat &);
     Mat* getPresentMatrix();
-    void htmlLog(QString &color, QString &info, QString &font, bool addTime);
-    void setDisplayImage(Mat &,bool);
+    void htmlLog(QString &color, QString &info, QString &font, bool addTime=true);
+    void setDisplayImage(Mat &img,bool newImage=true);
     void setDetectionDisplay(bool);
 
 protected:

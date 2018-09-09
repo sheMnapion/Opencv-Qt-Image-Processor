@@ -46,3 +46,37 @@ void setFeatureMatrix(Mat &image,Mat &featureImage,int threshold,QString &method
     }
     qDebug()<<"Size: "<<keypoints.size();
 }
+
+QImage *Mat2QImage(const Mat &imago)
+{
+    QImage *img;
+
+    if(imago.channels()==3)
+    {
+        //cvt Mat BGR 2 QImage RGB
+        cout<<"Normal picture"<<endl;
+        Mat *temp=new Mat();
+        *temp=imago.clone();
+        cv::cvtColor(*temp,*temp,CV_BGR2RGB);
+        img =new QImage((const unsigned char*)(temp->data),
+                    temp->cols,temp->rows,
+                    temp->cols*temp->channels(),
+                    QImage::Format_RGB888);
+    }
+    else if(imago.type()==CV_8UC1){
+        cout<<"Gray picture!"<<endl;
+        img =new QImage((const unsigned char*)(imago.data),
+                    imago.cols,imago.rows,
+                    imago.cols*imago.channels(),
+                    QImage::Format_Grayscale8);
+    }
+    else
+    {
+        img =new QImage((const unsigned char*)(imago.data),
+                    imago.cols,imago.rows,
+                    imago.cols*imago.channels(),
+                    QImage::Format_RGB888);
+    }
+
+    return img;
+}
