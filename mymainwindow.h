@@ -57,6 +57,12 @@ private slots:
 
     void on_detectSelectionBox_currentTextChanged(const QString &arg1);
 
+    void on_actionContrast_Adjust_A_triggered();
+
+    void on_brightSlider_sliderMoved(int position);
+
+    void on_contrastSlider_sliderMoved(int position);
+
 private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;
@@ -67,6 +73,7 @@ private:
     void htmlLog(QString &color, QString &info, QString &font, bool addTime=true);
     void setDisplayImage(Mat &img,bool newImage=true);
     void setDetectionDisplay(bool);
+    void setContraBrightDisplay(bool);
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);

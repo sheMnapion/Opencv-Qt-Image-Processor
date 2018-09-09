@@ -80,3 +80,23 @@ QImage *Mat2QImage(const Mat &imago)
 
     return img;
 }
+
+void setContraBrightMatrix(Mat &img, Mat &dst, int contra, int bright)
+{
+    cvtColor(img,img,COLOR_BGR2GRAY);
+    int deltaContra=contra-100;
+    int deltaBright=bright-100;
+
+    double a,b;
+    if(deltaContra>0){
+        double delta=127.*deltaContra/100;
+        a=255./(255.-2*delta);
+        b=a*(deltaBright-delta);
+    }
+    else{
+        double delta=-128.*deltaContra/100;
+        a=(256.-delta*2)/255.;
+        b=a*deltaBright+delta;
+    }
+    img.convertTo(dst,CV_8U,a,b);
+}

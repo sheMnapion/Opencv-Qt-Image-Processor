@@ -31,12 +31,21 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     setAcceptDrops(true);
     ui->label->setScaledContents(true);
     setDetectionDisplay(false);
-    //add detection selections
+    //detection box initialization
     ui->detectSelectionBox->addItem("Fast Detector");
     ui->detectSelectionBox->addItem("Surf Detector");
     ui->detectSelectionBox->addItem("Orb Detector");
-    ui->detectThresholdBox->setMinimum(2);
-    ui->detectThresholdBox->setMaximum(9);
+    ui->detectThresholdBox->setMinimum(0);
+    ui->detectThresholdBox->setMaximum(255);
+    ui->detectThresholdBox->setValue(70);
+    //contrast box initialization
+    setContraBrightDisplay(false);
+    ui->contrastSlider->setMinimum(0);
+    ui->contrastSlider->setMaximum(200);
+    ui->contrastSlider->setValue(100);
+    ui->brightSlider->setMinimum(0);
+    ui->brightSlider->setMaximum(200);
+    ui->brightSlider->setValue(100);
 }
 
 MyMainWindow::~MyMainWindow()
@@ -317,4 +326,36 @@ void MyMainWindow::on_detectSelectionBox_currentTextChanged(const QString &arg1)
     }
     else
         assert(0);
+}
+
+void MyMainWindow::on_actionContrast_Adjust_A_triggered()
+{
+    setContraBrightDisplay(true);
+}
+
+void MyMainWindow::on_brightSlider_sliderMoved(int position)
+{
+    Mat *presentImage=getPresentMatrix();
+    if(presentImage==NULL){
+        return;
+    }
+    Mat img=presentImage->clone();
+    Mat dst;
+    int contra=ui->contrastSlider->value();
+    setContraBrightMatrix(img,dst,contra,position);
+    setDisplayImage(dst,false);
+}
+
+
+void MyMainWindow::on_contrastSlider_sliderMoved(int position)
+{
+    Mat *presentImage=getPresentMatrix();
+    if(presentImage==NULL){
+        return;
+    }
+    Mat img=presentImage->clone();
+    Mat dst;
+    int bright=ui->brightSlider->value();
+    setContraBrightMatrix(img,dst,position,bright);
+    setDisplayImage(dst,false);
 }

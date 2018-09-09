@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>365</height>
+    <width>544</width>
+    <height>378</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MyMainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
@@ -125,7 +125,39 @@ p, li { white-space: pre-wrap; }
         <item>
          <widget class="QPushButton" name="endDetectButton">
           <property name="text">
-           <string>Exit</string>
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="brightLabel">
+          <property name="text">
+           <string>Brightness</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="brightSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="contrastLabel">
+          <property name="text">
+           <string>Contrast</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSlider" name="contrastSlider">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
          </widget>
         </item>
@@ -140,7 +172,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>466</width>
+     <width>544</width>
      <height>23</height>
     </rect>
    </property>
@@ -162,6 +194,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionGray_Scale_G"/>
     <addaction name="actionRestore_R"/>
     <addaction name="actionDetect"/>
+    <addaction name="actionContrast_Adjust_A"/>
    </widget>
    <widget class="QMenu" name="menuMatching_M">
     <property name="title">
@@ -193,7 +226,7 @@ p, li { white-space: pre-wrap; }
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionLoad_Picture_L">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/insert-image.png</normaloff>:/image/image/insert-image.png</iconset>
    </property>
    <property name="text">
@@ -202,7 +235,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionExit_E">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/exit.png</normaloff>:/image/image/exit.png</iconset>
    </property>
    <property name="text">
@@ -211,7 +244,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionGray_Scale_G">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/system-lock-screen.png</normaloff>:/image/image/system-lock-screen.png</iconset>
    </property>
    <property name="text">
@@ -220,7 +253,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionRestore_R">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/edit-undo.png</normaloff>:/image/image/edit-undo.png</iconset>
    </property>
    <property name="text">
@@ -234,7 +267,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionDetect">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/gtk-about.png</normaloff>:/image/image/gtk-about.png</iconset>
    </property>
    <property name="text">
@@ -248,7 +281,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionCancel_C">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/back.png</normaloff>:/image/image/back.png</iconset>
    </property>
    <property name="text">
@@ -257,7 +290,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionNext_N">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/forward.png</normaloff>:/image/image/forward.png</iconset>
    </property>
    <property name="text">
@@ -266,7 +299,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionClear_C">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/edit-delete.png</normaloff>:/image/image/edit-delete.png</iconset>
    </property>
    <property name="text">
@@ -275,15 +308,22 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionSave_Picture_S">
    <property name="icon">
-    <iconset>
+    <iconset resource="myimages.qrc">
      <normaloff>:/image/image/filesave.png</normaloff>:/image/image/filesave.png</iconset>
    </property>
    <property name="text">
     <string>Save Picture(&amp;S)</string>
    </property>
   </action>
+  <action name="actionContrast_Adjust_A">
+   <property name="text">
+    <string>Contrast Adjust(&amp;A)</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="myimages.qrc"/>
+ </resources>
  <connections/>
 </ui>

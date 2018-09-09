@@ -30,6 +30,14 @@ void MyMainWindow::setDetectionDisplay(bool enabled)
     ui->endDetectButton->setVisible(enabled);
 }
 
+void MyMainWindow::setContraBrightDisplay(bool enabled)
+{
+    ui->brightLabel->setVisible(enabled);
+    ui->brightSlider->setVisible(enabled);
+    ui->contrastLabel->setVisible(enabled);
+    ui->contrastSlider->setVisible(enabled);
+}
+
 void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime)
 {
     QString insertMessage="<br><p style=' font-family : ";
