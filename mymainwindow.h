@@ -63,6 +63,10 @@ private slots:
 
     void on_contrastSlider_sliderMoved(int position);
 
+    void on_brightContrastEndButton_clicked();
+
+    void on_actionHistogram_Equalization_E_triggered();
+
 private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;

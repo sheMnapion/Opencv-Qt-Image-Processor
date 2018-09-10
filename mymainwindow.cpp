@@ -359,3 +359,25 @@ void MyMainWindow::on_contrastSlider_sliderMoved(int position)
     setContraBrightMatrix(img,dst,position,bright);
     setDisplayImage(dst,false);
 }
+
+void MyMainWindow::on_brightContrastEndButton_clicked()
+{
+    setContraBrightDisplay(false);
+}
+
+void MyMainWindow::on_actionHistogram_Equalization_E_triggered()
+{
+    Mat *preImage=getPresentMatrix();
+    if(preImage==NULL){
+        QMessageBox msgBox;
+        msgBox.setText(tr("Image data is null!"));
+        msgBox.exec();
+    }
+    else{
+        Mat tempImage=preImage->clone();
+        Mat *dst=new Mat();
+        setEqualizedMatrix(tempImage,*dst);
+        addInProcessList(*dst);
+        setDisplayImage(*dst);
+    }
+}

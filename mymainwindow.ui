@@ -161,6 +161,13 @@ p, li { white-space: pre-wrap; }
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="brightContrastEndButton">
+          <property name="text">
+           <string>Close</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -195,6 +202,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionRestore_R"/>
     <addaction name="actionDetect"/>
     <addaction name="actionContrast_Adjust_A"/>
+    <addaction name="actionHistogram_Equalization_E"/>
    </widget>
    <widget class="QMenu" name="menuMatching_M">
     <property name="title">
@@ -318,6 +326,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionContrast_Adjust_A">
    <property name="text">
     <string>Contrast Adjust(&amp;A)</string>
+   </property>
+  </action>
+  <action name="actionHistogram_Equalization_E">
+   <property name="text">
+    <string>Histogram Equalization(&amp;E)</string>
    </property>
   </action>
  </widget>

@@ -3,7 +3,7 @@
 
 uchar *pixelColor(Mat &img,int x,int y)
 {
-    if(x>img.rows||y>img.cols){
+    if(x>img.rows||y>img.cols||x<0||y<0){
         cout<<"Invalid position!!!"<<endl;
         return NULL;
     }
@@ -99,4 +99,18 @@ void setContraBrightMatrix(Mat &img, Mat &dst, int contra, int bright)
         b=a*deltaBright+delta;
     }
     img.convertTo(dst,CV_8U,a,b);
+}
+
+void setEqualizedMatrix(Mat &img, Mat &dst)
+{
+    if(img.empty()==true){
+        qDebug()<<"Empty image to equalize!";
+        return;
+    }
+    vector<Mat> bgrPlanes;
+    split(img,bgrPlanes);
+    int size=bgrPlanes.size();
+    for(int i=0;i<size;i++)
+        equalizeHist(bgrPlanes[i],bgrPlanes[i]);
+    merge(bgrPlanes,dst);
 }

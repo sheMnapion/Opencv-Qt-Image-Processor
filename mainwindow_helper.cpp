@@ -36,6 +36,7 @@ void MyMainWindow::setContraBrightDisplay(bool enabled)
     ui->brightSlider->setVisible(enabled);
     ui->contrastLabel->setVisible(enabled);
     ui->contrastSlider->setVisible(enabled);
+    ui->brightContrastEndButton->setVisible(enabled);
 }
 
 void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTime)
