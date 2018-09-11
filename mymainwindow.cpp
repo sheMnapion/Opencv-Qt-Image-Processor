@@ -27,7 +27,7 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     _processList.clear();
     _processPointer=-1;
     ui->textEdit->clear();
-    ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0</h3>"));
+    ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0.1</h3>"));
     setAcceptDrops(true);
     ui->label->setScaledContents(true);
     setDetectionDisplay(false);
@@ -56,18 +56,6 @@ MyMainWindow::~MyMainWindow()
 void MyMainWindow::on_actionExit_E_triggered()
 {
     this->close();
-}
-void MyMainWindow::addInProcessList(Mat &img)
-{
-    Mat *localCopy=new Mat();
-    img.copyTo(*localCopy);
-    if(_processList.size()==_processPointer+1){
-        _processList.push_back(localCopy);
-        _processPointer++;
-    }
-    else{
-        _processList[_processPointer++]=localCopy;
-    }
 }
 
 void MyMainWindow::on_actionLoad_Picture_L_triggered()
@@ -394,5 +382,6 @@ void MyMainWindow::on_actionRetina_Model_R_triggered()
         Mat *dst=new Mat();
         getRetinaMatrix(tempImage,*dst);
         setDisplayImage(*dst);
+        htmlLog(tr("DarkGreen"),tr("Trying retina model"),tr("Times New Roman"),false);
     }
 }

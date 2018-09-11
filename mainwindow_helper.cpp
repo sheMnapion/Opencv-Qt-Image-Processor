@@ -5,7 +5,23 @@
 #include <opencvhelper.h>
 
 // some help functions
-// include mat-qimage transformation, html log helpers and etc
+// include process operations, html log helpers and etc
+
+void MyMainWindow::addInProcessList(Mat &img)
+{
+    Mat *localCopy=new Mat();
+    img.copyTo(*localCopy);
+    if(_processList.size()==_processPointer+1){
+        _processList.push_back(localCopy);
+        _processPointer++;
+    }
+    else{
+        while(_processList.size()>_processPointer+1)
+            _processList.pop_back();
+        _processList.push_back(localCopy);
+        _processPointer++;
+    }
+}
 
 void MyMainWindow::setDisplayImage(Mat &img,bool newImage)
 {
