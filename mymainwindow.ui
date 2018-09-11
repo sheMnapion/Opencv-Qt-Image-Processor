@@ -210,9 +210,16 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionLoad_Matching_Picture_LMP"/>
    </widget>
+   <widget class="QMenu" name="menuFilter_F">
+    <property name="title">
+     <string>Filter(&amp;F)</string>
+    </property>
+    <addaction name="actionRetina_Model_R"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuSimple_Processes_P"/>
    <addaction name="menuMatching_M"/>
+   <addaction name="menuFilter_F"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -331,6 +338,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionHistogram_Equalization_E">
    <property name="text">
     <string>Histogram Equalization(&amp;E)</string>
+   </property>
+  </action>
+  <action name="actionRetina_Model_R">
+   <property name="text">
+    <string>Retina Model(&amp;R)</string>
    </property>
   </action>
  </widget>

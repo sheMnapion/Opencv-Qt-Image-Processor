@@ -377,7 +377,22 @@ void MyMainWindow::on_actionHistogram_Equalization_E_triggered()
         Mat tempImage=preImage->clone();
         Mat *dst=new Mat();
         setEqualizedMatrix(tempImage,*dst);
-        addInProcessList(*dst);
+        setDisplayImage(*dst);
+    }
+}
+
+void MyMainWindow::on_actionRetina_Model_R_triggered()
+{
+    Mat *preImage=getPresentMatrix();
+    if(preImage==NULL){
+        QMessageBox msgBox;
+        msgBox.setText(tr("Image data is null!"));
+        msgBox.exec();
+    }
+    else{
+        Mat tempImage=preImage->clone();
+        Mat *dst=new Mat();
+        getRetinaMatrix(tempImage,*dst);
         setDisplayImage(*dst);
     }
 }

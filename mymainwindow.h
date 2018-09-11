@@ -67,6 +67,8 @@ private slots:
 
     void on_actionHistogram_Equalization_E_triggered();
 
+    void on_actionRetina_Model_R_triggered();
+
 private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;

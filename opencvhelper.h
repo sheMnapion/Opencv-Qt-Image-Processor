@@ -9,4 +9,5 @@ QImage *Mat2QImage(const Mat &img);
 void setFeatureMatrix(Mat &image, Mat &featureImage, int threshold,QString &method);
 void setContraBrightMatrix(Mat &img,Mat &dst,int contra,int bright);
 void setEqualizedMatrix(Mat &img,Mat &dst);
+void getRetinaMatrix(Mat &img,Mat &dst);
 #endif // OPENCVHELPER_H

@@ -114,3 +114,15 @@ void setEqualizedMatrix(Mat &img, Mat &dst)
         equalizeHist(bgrPlanes[i],bgrPlanes[i]);
     merge(bgrPlanes,dst);
 }
+
+void getRetinaMatrix(Mat &img, Mat &dst)
+{
+    Retina myRetina(img.size());
+    //save default retina parameters file
+    // myRetina->write("RetinaDefaultParameters.xml");
+    //The parameters may be reloaded using method setup
+    myRetina.clearBuffers();
+    myRetina.run(img);
+    //retrieve and display retina output
+    myRetina.getParvo(dst);
+}
