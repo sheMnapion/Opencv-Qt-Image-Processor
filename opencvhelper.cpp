@@ -1,5 +1,7 @@
 #include "opencvhelper.h"
+#include "mymainwindow.h"
 #include <QDebug>
+#include <QString>
 
 uchar *pixelColor(Mat &img,int x,int y)
 {
@@ -15,10 +17,12 @@ uchar *pixelColor(Mat &img,int x,int y)
         ret[i]=poz[i];
     return ret;
 }
-void setFeatureMatrix(Mat &image,Mat &featureImage,int threshold,QString &method)
+int setFeatureMatrix(Mat &image,Mat &featureImage,int threshold,QString &method)
 {
     if(image.empty())
-        return;//do nothing for empty image
+        return EMPTY_INPUT;//do nothing for empty image
+    if(image.channels()!=3&&image.channels()!=4)
+        return NOT_ENOUGH_CHANNELS;
     qDebug()<<method<<" with threshold "<<threshold;
     Mat tempImage;
     cvtColor(image, tempImage, COLOR_BGR2GRAY);
@@ -45,6 +49,7 @@ void setFeatureMatrix(Mat &image,Mat &featureImage,int threshold,QString &method
         qDebug()<<"TODO";
     }
     qDebug()<<"Size: "<<keypoints.size();
+    return 0;
 }
 
 QImage *Mat2QImage(const Mat &imago)
@@ -125,4 +130,24 @@ void getRetinaMatrix(Mat &img, Mat &dst)
     myRetina.run(img);
     //retrieve and display retina output
     myRetina.getParvo(dst);
+}
+
+QString cvhelperError(int errorNumber)
+{
+    QString ret;
+    switch(errorNumber){
+        case SUCCESS:
+            ret=QString("Success");
+            break;
+        case NOT_ENOUGH_CHANNELS:
+            ret=QString("The input image doesn't contain enough channel for desired operation");
+            break;
+        case EMPTY_INPUT:
+            ret=QString("The input image is empty");
+            break;
+        default:
+            ret=QString("Unexpected input!!!");
+            break;
+    }
+    return ret;
 }

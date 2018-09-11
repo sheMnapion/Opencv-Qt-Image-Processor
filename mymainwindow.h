@@ -30,6 +30,7 @@ class MyMainWindow : public QMainWindow
 
 public:
     explicit MyMainWindow(QWidget *parent = 0);
+    void htmlLog(QString &color, QString &info, QString &font, bool addTime=true);
     ~MyMainWindow();
 
 private slots:
@@ -76,7 +77,6 @@ private:
     QSize _presentSize;
     void addInProcessList(Mat &);
     Mat* getPresentMatrix();
-    void htmlLog(QString &color, QString &info, QString &font, bool addTime=true);
     void setDisplayImage(Mat &img,bool newImage=true);
     void setDetectionDisplay(bool);
     void setContraBrightDisplay(bool);

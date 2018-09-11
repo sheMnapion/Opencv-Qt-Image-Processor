@@ -287,8 +287,13 @@ void MyMainWindow::on_startDetectButton_clicked()
     Mat featureImage;
     int threshold=ui->detectThresholdBox->value();
     QString method=ui->detectSelectionBox->currentText();
-    setFeatureMatrix(img,featureImage,threshold,method);
-    setDisplayImage(featureImage,false);
+    int sfm=setFeatureMatrix(img,featureImage,threshold,method);
+    if(sfm==0)
+        setDisplayImage(featureImage,false);
+    else{
+        QString errorMessage=cvhelperError(sfm);
+        htmlLog(tr("Red"),errorMessage,tr("Times"),false);
+    }
 }
 
 void MyMainWindow::on_endDetectButton_clicked()
