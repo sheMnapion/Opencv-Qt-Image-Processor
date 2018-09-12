@@ -24,8 +24,13 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("My OpenCV Image Processor"));
+    // process trails initialization
     _processList.clear();
     _processPointer=-1;
+    for(int i=0;i<MAX_SUBWINDOW_NUMBER;i++){
+        _multiProcessList[i].clear();
+        _multiProcessPointer[i]=-1;
+    }
     ui->textEdit->clear();
     ui->textEdit->insertHtml(tr("<h3>Welcome to Lac's Image Processor!<br>Version 2.0.1</h3>"));
     setAcceptDrops(true);
@@ -46,6 +51,9 @@ MyMainWindow::MyMainWindow(QWidget *parent) :
     ui->brightSlider->setMinimum(0);
     ui->brightSlider->setMaximum(200);
     ui->brightSlider->setValue(100);
+    //edit mode initialization
+    _presentMode=SINGLE_IMAGE_EDIT_MODE;
+    ui->multiImageArea->setVisible(false);
 }
 
 MyMainWindow::~MyMainWindow()
@@ -69,15 +77,20 @@ void MyMainWindow::on_actionLoad_Picture_L_triggered()
         //do nothing
     }
     else{
-        image=imread(name);
-        if(!image.data){
+        Mat tempImage=imread(name);
+        if(!tempImage.data){
             QMessageBox msgBox;
             msgBox.setText(tr("No such image!"));
             msgBox.exec();
             ui->label->clear();
         }
         else{
-            setDisplayImage(image);
+            if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+                image=tempImage.clone();
+                setDisplayImage(image);
+            }
+            else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE)
+                setDisplayImage(tempImage);
             QString logInfo=filename+" opened.";
             htmlLog(tr("maroon"),logInfo,tr("times"));
         }
@@ -86,19 +99,45 @@ void MyMainWindow::on_actionLoad_Picture_L_triggered()
 
 void MyMainWindow::on_actionGray_Scale_G_triggered()
 {
-    if(!image.data){
-        QMessageBox msgBox;
-        msgBox.setText(tr("Image data is null!"));
-        msgBox.exec();
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+        Mat *presentImage=getPresentMatrix();
+        if(presentImage==NULL){
+            QMessageBox msgBox;
+            msgBox.setText(tr("Image data is null!"));
+            msgBox.exec();
+        }
+        else if(presentImage->type()==CV_8UC1){
+            QMessageBox msgBox;
+            msgBox.setText(tr("Image is already in gray scale!"));
+            msgBox.exec();
+        }
+        else{
+            Mat temp=presentImage->clone();
+            cvtColor(temp,grayImage,COLOR_BGR2GRAY);
+            setDisplayImage(grayImage);
+        }
     }
-    else if(image.type()==CV_8UC1){
-        QMessageBox msgBox;
-        msgBox.setText(tr("Image is already in gray scale!"));
-        msgBox.exec();
-    }
-    else{
-        cvtColor(image,grayImage,COLOR_BGR2GRAY);
-        setDisplayImage(grayImage);
+    else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE){
+        int arrayNumber=getPresentWindowNumber();
+        cout<<"Vacant:"<<arrayNumber<<endl;
+        if(arrayNumber<0){
+            QMessageBox msgBox;
+            msgBox.setText(tr("No image widget working!"));
+            msgBox.exec();
+        }
+        else{
+            Mat *temp=getPresentMatrix();
+            if(temp==NULL){
+                QMessageBox msgBox;
+                msgBox.setText(tr("No image widget working!"));
+                msgBox.exec();
+            }
+            else{
+                Mat img=temp->clone();
+                cvtColor(img,grayImage,COLOR_BGR2GRAY);
+                setDisplayImage(img);
+            }
+        }
     }
 }
 
@@ -389,4 +428,9 @@ void MyMainWindow::on_actionRetina_Model_R_triggered()
         setDisplayImage(*dst);
         htmlLog(tr("DarkGreen"),tr("Trying retina model"),tr("Times New Roman"),false);
     }
+}
+
+void MyMainWindow::on_actionMode_Switch_triggered()
+{
+    switchMode();
 }

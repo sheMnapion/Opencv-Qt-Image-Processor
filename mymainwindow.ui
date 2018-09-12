@@ -18,10 +18,13 @@
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,1">
+       <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,2,1">
         <property name="sizeConstraint">
          <enum>QLayout::SetFixedSize</enum>
         </property>
+        <item>
+         <widget class="QMdiArea" name="multiImageArea"/>
+        </item>
         <item>
          <widget class="QLabel" name="label">
           <property name="sizePolicy">
@@ -190,6 +193,7 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionLoad_Picture_L"/>
     <addaction name="actionSave_Picture_S"/>
     <addaction name="actionExit_E"/>
+    <addaction name="actionMode_Switch"/>
    </widget>
    <widget class="QMenu" name="menuSimple_Processes_P">
     <property name="title">
@@ -216,10 +220,17 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionRetina_Model_R"/>
    </widget>
+   <widget class="QMenu" name="menuMultiple_Image_Processes">
+    <property name="title">
+     <string>Multiple Image Processes(&amp;I)</string>
+    </property>
+    <addaction name="actionArithmetic_Blend"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuSimple_Processes_P"/>
    <addaction name="menuMatching_M"/>
    <addaction name="menuFilter_F"/>
+   <addaction name="menuMultiple_Image_Processes"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -228,6 +239,7 @@ p, li { white-space: pre-wrap; }
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionMode_Switch"/>
    <addaction name="actionLoad_Picture_L"/>
    <addaction name="actionSave_Picture_S"/>
    <addaction name="actionDetect"/>
@@ -343,6 +355,20 @@ p, li { white-space: pre-wrap; }
   <action name="actionRetina_Model_R">
    <property name="text">
     <string>Retina Model(&amp;R)</string>
+   </property>
+  </action>
+  <action name="actionArithmetic_Blend">
+   <property name="text">
+    <string>Arithmetic Blend</string>
+   </property>
+  </action>
+  <action name="actionMode_Switch">
+   <property name="icon">
+    <iconset resource="myimages.qrc">
+     <normaloff>:/image/image/gtk-refresh.png</normaloff>:/image/image/gtk-refresh.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mode Switch</string>
    </property>
   </action>
  </widget>

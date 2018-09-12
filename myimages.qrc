@@ -9,5 +9,6 @@
         <file>image/edit-undo.png</file>
         <file>image/edit-delete.png</file>
         <file>image/gtk-about.png</file>
+        <file>image/gtk-refresh.png</file>
     </qresource>
 </RCC>

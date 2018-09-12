@@ -3,37 +3,131 @@
 #include "ui_mymainwindow.h"
 #include <QDateTime>
 #include <opencvhelper.h>
+#include <QMdiSubWindow>
+#include <QMdiArea>
+#include <QDebug>
 
 // some help functions
 // include process operations, html log helpers and etc
 
-void MyMainWindow::addInProcessList(Mat &img)
+int MyMainWindow::getNextWindowNumber()
+{
+    bool occupied[10];
+    memset(occupied,0,sizeof(occupied));
+    QList<QMdiSubWindow* > allWindows=ui->multiImageArea->subWindowList();
+    foreach (QMdiSubWindow* temp,allWindows){
+        QString name=temp->windowTitle();
+        string tempName=name.toStdString();
+        char c=tempName[6];
+        int windowNumber=c-'0';
+        occupied[windowNumber]=true;
+    }
+    int ret=-1;
+    for(int i=0;i<10;i++){
+        if(!occupied[i]){
+            ret=i;
+            break;
+        }
+    }
+    return ret;
+}
+int MyMainWindow::getPresentWindowNumber()
+{
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE)
+        return -1;
+    QWidget *focus=ui->multiImageArea->focusWidget();
+    if(focus==NULL)
+        return -1;
+    QString temp=focus->windowTitle();
+    string tempString=temp.toStdString();
+    return tempString[6]-'0';
+}
+
+void MyMainWindow::addInProcessList(Mat &img,int arrayNumber)
 {
     Mat *localCopy=new Mat();
     img.copyTo(*localCopy);
-    if(_processList.size()==_processPointer+1){
-        _processList.push_back(localCopy);
-        _processPointer++;
+    vector<Mat*> processor;
+    int *processPointer;
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+        processor=_processList;
+        *processPointer=_processPointer;
+    }
+    else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE){
+        processor=_multiProcessList[arrayNumber];
+        processPointer=_multiProcessPointer+arrayNumber;
+    }
+    int size=*processPointer;
+    if(processor.size()==(size+1)){
+        processor.push_back(localCopy);
+        *processPointer=size+1;
     }
     else{
-        while(_processList.size()>_processPointer+1)
-            _processList.pop_back();
-        _processList.push_back(localCopy);
-        _processPointer++;
+        while(processor.size()>size+1)
+            processor.pop_back();
+        processor.push_back(localCopy);
+        *processPointer=size+1;
     }
 }
 
-void MyMainWindow::setDisplayImage(Mat &img,bool newImage)
+void MyMainWindow::clearProcessList(int arrayNumber)
 {
-    if(img.cols>ui->label->size().height()&&img.rows>ui->label->size().width())
-        cv::resize(img,img,Size(ui->label->size().width(),ui->label->size().height()));
+    if(arrayNumber<0){
+        _processList.clear();
+        _processPointer=-1;
+    }
+    else{
+        _multiProcessList[arrayNumber].clear();
+        _multiProcessPointer[arrayNumber]=-1;
+    }
+}
+
+void MyMainWindow::on_SubWindowClosed()
+{
+    cout<<"CLOSED!"<<endl;
+}
+
+void MyMainWindow::setDisplayImage(Mat &img,bool newImage,bool newWindow,int arrayNumber)
+{
     _presentSize=ui->label->size();
-    if(newImage)
-        addInProcessList(img);
-    QImage *imgo=Mat2QImage(img);
-    //store the picture
-    ui->label->clear();
-    ui->label->setPixmap(QPixmap::fromImage(*imgo));
+    assert(img.empty()==false);
+    Mat tempImage=img.clone();
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+        if(newImage)
+            addInProcessList(img); //store the picture
+        // display adjustments
+        if(img.cols>ui->label->size().height()||img.rows>ui->label->size().width())
+            cv::resize(tempImage,tempImage,Size(ui->label->size().width(),ui->label->size().height()));
+        QImage *imgo=Mat2QImage(tempImage);
+        ui->label->clear();
+        ui->label->setPixmap(QPixmap::fromImage(*imgo));
+    }
+    else{
+        if(img.cols>300||img.rows>300)
+            cv::resize(tempImage,tempImage,Size(300,300));
+        QImage *imgo=Mat2QImage(tempImage);
+        int windowNumber;
+        if(newWindow){//buggy version, don't consider situ vn num(pic)>10
+            windowNumber=getNextWindowNumber();
+            cout<<"Vacant number: "<<windowNumber<<endl;
+        }
+        else{
+            windowNumber=getPresentWindowNumber();
+            QWidget *presentFocus=ui->multiImageArea->focusWidget();
+            presentFocus->destroyed(this);
+        }
+        if(newImage)
+            addInProcessList(tempImage,windowNumber);
+        QLabel *subImage=new QLabel(this);
+        subImage->resize(300,300);
+        subImage->setPixmap(QPixmap::fromImage(*imgo));
+        subImage->setScaledContents(true);
+        QMdiSubWindow *child=ui->multiImageArea->addSubWindow(subImage);
+
+        QString windowTitle=QString("Image ")+QString::number(windowNumber,10);
+        child->setWindowTitle(windowTitle);
+        child->show();
+    }
 }
 
 void MyMainWindow::setDetectionDisplay(bool enabled)
@@ -67,6 +161,20 @@ void MyMainWindow::htmlLog(QString &color,QString &info,QString &font,bool addTi
     if(addTime)
         insertMessage+=QDateTime::currentDateTime().toString();
     ui->textEdit->insertHtml(insertMessage);
+}
+
+void MyMainWindow::switchMode()
+{
+    //dumb implementation here, modify later for future use
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+        ui->label->setVisible(false);
+        ui->multiImageArea->setVisible(true);
+    }
+    else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE){
+        ui->label->setVisible(true);
+        ui->multiImageArea->setVisible(false);
+    }
+    _presentMode=!_presentMode;
 }
 
 // end of help functions

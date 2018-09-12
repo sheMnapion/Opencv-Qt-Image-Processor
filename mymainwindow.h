@@ -17,6 +17,11 @@
 #define AUTO_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_AUTOSIZE)
 #define NORMAL_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_NORMAL)
 
+#define MAX_SUBWINDOW_NUMBER       10
+
+#define SINGLE_IMAGE_EDIT_MODE     0x0
+#define MULTIPLE_IMAGE_EDIT_MODE   0x1
+
 using namespace cv;
 using namespace std;
 
@@ -70,16 +75,26 @@ private slots:
 
     void on_actionRetina_Model_R_triggered();
 
+    void on_actionMode_Switch_triggered();
+    void on_SubWindowClosed();
+
 private:
     Ui::MyMainWindow *ui;
     vector<Mat *> _processList;
     int _processPointer;
+    vector<Mat *> _multiProcessList[MAX_SUBWINDOW_NUMBER];
+    int _multiProcessPointer[MAX_SUBWINDOW_NUMBER];
     QSize _presentSize;
-    void addInProcessList(Mat &);
+    int _presentMode;
+    void addInProcessList(Mat &,int arrayNumber=-1);
+    void clearProcessList(int arrayNumber=-1);
     Mat* getPresentMatrix();
-    void setDisplayImage(Mat &img,bool newImage=true);
+    void setDisplayImage(Mat &img,bool newImage=true,bool newWindow=true, int arrayNumber=-1);
     void setDetectionDisplay(bool);
     void setContraBrightDisplay(bool);
+    void switchMode();
+    int getNextWindowNumber();
+    int getPresentWindowNumber();
 
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
