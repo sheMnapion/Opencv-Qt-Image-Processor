@@ -47,27 +47,31 @@ void MyMainWindow::addInProcessList(Mat &img,int arrayNumber)
 {
     Mat *localCopy=new Mat();
     img.copyTo(*localCopy);
-    vector<Mat*> processor;
-    int *processPointer;
+    vector<Mat*> *processor;
+    int *processPointer=NULL;
     if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
-        processor=_processList;
-        *processPointer=_processPointer;
+        processor=&_processList;
+        processPointer=&_processPointer;
     }
     else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE){
-        processor=_multiProcessList[arrayNumber];
-        processPointer=_multiProcessPointer+arrayNumber;
+        processor=&_multiProcessList[arrayNumber];
+        processPointer=&_multiProcessPointer[arrayNumber];
     }
+    else
+        TODO();
     int size=*processPointer;
-    if(processor.size()==(size+1)){
-        processor.push_back(localCopy);
+    qDebug()<<"Before size: "<<size;
+    if(processor->size()==(size+1)){
+        processor->push_back(localCopy);
         *processPointer=size+1;
     }
     else{
-        while(processor.size()>size+1)
-            processor.pop_back();
-        processor.push_back(localCopy);
+        while(processor->size()>size+1)
+            processor->pop_back();
+        processor->push_back(localCopy);
         *processPointer=size+1;
     }
+    qDebug()<<"Process pointer: "<<*processPointer<<"\t"<<_processPointer;
 }
 
 void MyMainWindow::clearProcessList(int arrayNumber)
@@ -93,8 +97,10 @@ void MyMainWindow::setDisplayImage(Mat &img,bool newImage,bool newWindow,int arr
     assert(img.empty()==false);
     Mat tempImage=img.clone();
     if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
-        if(newImage)
+        if(newImage){
+            qDebug()<<"Add in.";
             addInProcessList(img); //store the picture
+        }
         // display adjustments
         if(img.cols>ui->label->size().height()||img.rows>ui->label->size().width())
             cv::resize(tempImage,tempImage,Size(ui->label->size().width(),ui->label->size().height()));

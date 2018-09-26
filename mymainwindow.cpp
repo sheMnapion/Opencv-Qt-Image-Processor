@@ -185,9 +185,16 @@ void MyMainWindow::on_actionCancel_C_triggered()
 
 Mat* MyMainWindow::getPresentMatrix()
 {
-    if(_processPointer<0)
-        return NULL;
-    return _processList[_processPointer];
+    qDebug()<<"Mode: "<<_presentMode;
+    if(_presentMode==SINGLE_IMAGE_EDIT_MODE){
+        if(_processPointer<0)
+           return NULL;
+        return _processList[_processPointer];
+    }
+    else if(_presentMode==MULTIPLE_IMAGE_EDIT_MODE){
+        TODO();
+        return _processList[_processPointer];
+    }
 }
 
 void MyMainWindow::on_actionSave_Picture_S_triggered()
@@ -267,8 +274,10 @@ void MyMainWindow::mousePressEvent(QMouseEvent *event)
         QCursor cursor;
         cursor.setShape(Qt::ClosedHandCursor);
         Mat *preImage=getPresentMatrix();
-        if(preImage==NULL)
+        if(preImage==NULL){
+            qDebug()<<"No image in mouse press dealer.";
             return;
+        }
         QApplication::setOverrideCursor(cursor);
         QPoint clickPoint=event->pos()-ui->label->pos()-ui->centralWidget->pos();
         qDebug()<<"Click at "<<clickPoint;

@@ -17,6 +17,7 @@
 #define AUTO_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_AUTOSIZE)
 #define NORMAL_SHOW(PIC,WIN_NAME) PIC_SHOW(PIC,WIN_NAME,WINDOW_NORMAL)
 
+#define TODO() printf("Not finished %s\n",__LINE__); assert(0);
 #define MAX_SUBWINDOW_NUMBER       10
 
 #define SINGLE_IMAGE_EDIT_MODE     0x0
